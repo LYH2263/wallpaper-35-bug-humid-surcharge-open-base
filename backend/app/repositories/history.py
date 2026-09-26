@@ -52,13 +52,11 @@ def list_runs(limit: int = 50, wall_id: int | None = None):
                 """,
                 (limit,),
             ).fetchall()
-        from app.services.humid_open import open_drop_surcharge
-
         out = []
         for row in rows:
             d = dict(row)
-            raw = _legacy_result(json.loads(d.pop("result_json")))
-            d["result"] = open_drop_surcharge(raw)
+            # 历史只读：result_json 是写入时的快照，打开编号时不得按当前设置/规则重算
+            d["result"] = _legacy_result(json.loads(d.pop("result_json")))
             out.append(d)
         return out
     finally:

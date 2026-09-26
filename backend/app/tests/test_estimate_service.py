@@ -61,6 +61,42 @@ def test_history_keeps_snapshot_when_settings_change_later():
     assert new["order_rolls"] == 16  # 11+5
 
 
+def test_history_stays_pinned_after_rule_disabled():
+    walls.set_space_type(1, "damp")
+    saved = estimate_service.run_estimate(1, 1, save=True, note="写入时启用+1")
+    assert saved["order_rolls"] == 12
+
+    # 随后停用规则：旧编号打开仍是写入时的类型与加损订货，不退回基础
+    settings_repo.update_settings({"damp_rule_enabled": False})
+    r = history.list_runs()[0]["result"]
+    assert r["rolls"] == 11
+    assert r["order_rolls"] == 12
+    assert r["space_type"] == "damp"
+    assert r["damp_rule_applied"] is True
+    assert r["damp_extra_rolls"] == 1
+
+    # 新测算（即使墙面仍潮湿）回到基础卷数
+    new = estimate_service.run_estimate(1, 1, save=True, note="停用后新单")
+    assert new["order_rolls"] == 11
+    assert new["damp_rule_applied"] is False
+
+    # 两笔同列：旧单钉住加损，新单为基础，互不串台
+    rows = history.list_runs()
+    by_note = {row["note"]: row["result"] for row in rows}
+    assert by_note["写入时启用+1"]["order_rolls"] == 12
+    assert by_note["停用后新单"]["order_rolls"] == 11
+
+
+def test_legacy_run_without_snapshot_falls_back_to_base():
+    # 模拟旧版本写入：result_json 里没有订货快照字段
+    history.insert_run(1, 1, {"rolls": 11, "drops": 31}, note="旧单")
+    r = history.list_runs()[0]["result"]
+    assert r["order_rolls"] == 11
+    assert r["space_type"] == "normal"
+    assert r["damp_rule_applied"] is False
+    assert r["damp_extra_rolls"] == 0
+
+
 def test_history_filter_by_wall():
     estimate_service.run_estimate(1, 1, save=True, note="")
     estimate_service.run_estimate(2, 1, save=True, note="")
