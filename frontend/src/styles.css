@@ -1,0 +1,20 @@
+body { margin: 0; font-family: Georgia, serif; background: #faf3e8; }
+.wp-header { background: #6b4226; color: #fff; padding: 0.75rem 1rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+.wp-header a { color: #ffd9a8; margin-right: 0.75rem; text-decoration: none; }
+.wp-header a.router-link-active { text-decoration: underline; }
+.page { padding: 1rem 1.5rem; }
+.strip-bar { display: flex; gap: 4px; align-items: flex-end; flex-wrap: wrap; }
+.strip { width: 14px; background: linear-gradient(#c49a6c, #8b5a2b); border-radius: 2px 2px 0 0; }
+.roll-chip { display: inline-block; margin: 0.25rem; padding: 0.5rem; background: #fff; border: 1px dashed #6b4226; }
+.warn { color: #a00; }
+.ok { color: #2a7a2a; }
+.muted { color: #8a7a68; }
+.card { background: #fff; border: 1px solid #e0cfb8; border-radius: 6px; padding: 1rem 1.25rem; max-width: 640px; }
+.row { display: flex; align-items: center; gap: 0.5rem; margin: 0.6rem 0; }
+.kv { border-collapse: collapse; margin-top: 0.75rem; }
+.kv th { text-align: left; padding: 0.35rem 0.9rem 0.35rem 0; color: #6b4226; }
+.kv td { padding: 0.35rem 0.9rem 0.35rem 0; border-top: 1px solid #ecdcc6; }
+.tag { display: inline-block; padding: 0.05rem 0.55rem; border-radius: 999px; font-size: 0.85em; border: 1px solid; }
+.tag-normal { background: #eef4ea; color: #3f6b34; border-color: #bcd0af; }
+.tag-damp { background: #e7f0f7; color: #235a86; border-color: #aecbe2; }
+.damp-note { color: #235a86; font-size: 0.9em; }
