@@ -61,6 +61,35 @@ def test_history_keeps_snapshot_when_settings_change_later():
     assert new["order_rolls"] == 16  # 11+5
 
 
+def test_history_snapshot_pinned_after_rule_disabled():
+    walls.set_space_type(1, "damp")
+    saved = estimate_service.run_estimate(1, 1, save=True, note="写入时+1卷")
+    assert saved["order_rolls"] == 12
+
+    # 停用规则：新测算回基础，但旧记录仍钉住写入时的订货与类型
+    settings_repo.update_settings({"damp_rule_enabled": False})
+    fresh = estimate_service.run_estimate(1, 1, save=False, note="")
+    assert fresh["order_rolls"] == 11
+    assert fresh["damp_rule_applied"] is False
+
+    r = history.list_runs()[0]["result"]
+    assert r["space_type"] == "damp"
+    assert r["rolls"] == 11
+    assert r["order_rolls"] == 12
+    assert r["damp_rule_applied"] is True
+    assert r["damp_extra_rolls"] == 1
+    assert r["order_rolls"] - r["rolls"] == r["damp_extra_rolls"]
+
+
+def test_history_normal_wall_snapshot_equals_base():
+    estimate_service.run_estimate(1, 1, save=True, note="普通墙")
+    settings_repo.update_settings({"damp_extra_rolls": 5})
+    r = history.list_runs()[0]["result"]
+    assert r["space_type"] == "normal"
+    assert r["damp_rule_applied"] is False
+    assert r["order_rolls"] == r["rolls"]
+
+
 def test_history_filter_by_wall():
     estimate_service.run_estimate(1, 1, save=True, note="")
     estimate_service.run_estimate(2, 1, save=True, note="")

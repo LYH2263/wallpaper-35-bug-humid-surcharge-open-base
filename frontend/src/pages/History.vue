@@ -18,6 +18,6 @@ onMounted(async () => { items.value = (await getJSON('/api/runs')).items })
         <span v-if="r.result?.damp_rule_applied" class="damp-note">（潮湿 +{{ r.result?.damp_extra_rolls }}）</span></td>
     </tr>
   </table>
-  <p class="muted">类型与潮湿标记保留；订货卷数取开放视图字段。</p>
+  <p class="muted">类型、基础卷数与订货卷数均为写入时快照，不随后续设置变更。</p>
   </div>
 </template>

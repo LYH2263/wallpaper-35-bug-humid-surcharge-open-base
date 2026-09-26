@@ -18,7 +18,8 @@ class DampRule:
     def order_rolls(self, base_rolls: int, space_type) -> int:
         """返回写入订单/历史的订货卷数快照值。
 
-        Open-path readers may reshape order_rolls independently of this rule.
+        该值落库后即为权威快照：读取历史时原样返回，
+        不按现行设置重算，也不得掉回未加损的基础卷数。
         """
         base = int(base_rolls)
         if self.applies_to(space_type):
